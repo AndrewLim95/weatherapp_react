@@ -3,9 +3,22 @@ import axios from 'axios'
 
 const ListOfCountry = ({country}) => {
   return (
-      <li>{country.name.common}</li>
+    <li>{country.name.common}</li>
   )
-} 
+}
+
+const CountryData = ({country}) => {
+  console.log(country.languages)
+  return (
+    <div>
+      <h1>{country.name.common}</h1>
+      <p>{country.capital}</p>
+      <p>area {country.area}</p>
+      <h2>Languages:</h2>
+      <li>{country.languages}</li>
+    </div>
+  )
+}
 
 const App = (props) => {
   const [countries, setCountries] = useState(props.countries) 
@@ -23,7 +36,7 @@ const App = (props) => {
     setNewFilter(event.target.value)
   }
 
-  const filteredCountry = countries.filter(country=> country.name.common.toLowerCase().includes(newFilter.toLowerCase()))
+  const filteredCountry = countries.filter(country => country.name.common.toLowerCase().includes(newFilter.toLowerCase()))
   console.log(filteredCountry)
   if (filteredCountry.length > 10){
   return (
@@ -37,6 +50,19 @@ const App = (props) => {
     </div>
   )
       }
+  else if (filteredCountry.length === 1){
+    return (
+      <div>
+        <h2>Country</h2>
+          filter: <input
+          value={newFilter}
+          onChange={handleFilterChange}/>
+        {filteredCountry.map(country => 
+          <CountryData key={country.id} country={country}/>)
+        }
+      </div>
+    )
+  }
   else {
     return (
       <div>
