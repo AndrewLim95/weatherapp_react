@@ -1,25 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const ListOfCountry = ({country}) => {
-  return (
-    <li>{country.name.common}</li>
-  )
-}
-
-const CountryData = ({country}) => {
-  console.log(country.languages)
-  return (
-    <div>
-      <h1>{country.name.common}</h1>
-      <p>{country.capital}</p>
-      <p>area {country.area}</p>
-      <h2>Languages:</h2>
-      <li>{country.languages}</li>
-    </div>
-  )
-}
-
 const App = (props) => {
   const [countries, setCountries] = useState(props.countries) 
   const [newFilter, setNewFilter] = useState('')
@@ -41,7 +22,7 @@ const App = (props) => {
   if (filteredCountry.length > 10){
   return (
     <div>
-      <h2>Country</h2>
+      <h2>Find Country</h2>
         filter: <input
         value={newFilter}
         onChange={handleFilterChange}/>
@@ -49,32 +30,42 @@ const App = (props) => {
       <p>Too many matches, please specify</p>
     </div>
   )
-      }
+  }
   else if (filteredCountry.length === 1){
     return (
       <div>
-        <h2>Country</h2>
+        <h2>Find Country</h2>
           filter: <input
           value={newFilter}
           onChange={handleFilterChange}/>
+          <h2>Country data</h2>
         {filteredCountry.map(country => 
-          <CountryData key={country.id} country={country}/>)
-        }
+          <div key={country.id}>
+          <h1>{country.name.common}</h1>
+          <p>{country.capital}</p>
+          <p>{country.area}</p>
+          <h2>Languages:</h2>
+          {Object.values(country.languages).map(language => 
+          <li key={language.id}>{language}</li>
+          )
+          }
+          <img src={country.flags.png} alt="country flag" />
+          </div>
+        )}
       </div>
     )
   }
   else {
     return (
       <div>
-        <h2>Country</h2>
+        <h2>Find Country</h2>
           filter: <input
           value={newFilter}
           onChange={handleFilterChange}/>
         <h2>List of Countries:</h2>
-          {
-          filteredCountry.map(country => 
-          <ListOfCountry key={country.id} country={country}/>)
-          }
+          {filteredCountry.map(country => 
+          <li key={country.id}>{country.name.common}</li>
+          )}
       </div>
     )
   }
