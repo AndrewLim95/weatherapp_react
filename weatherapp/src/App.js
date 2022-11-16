@@ -1,5 +1,17 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import GetWeather from './components/weatherApi'
+
+const InputCountry = ({newFilter, handleFilterChange})=>{
+  return (
+    <div>
+    <h2>Find Country</h2>
+          filter: <input
+          value={newFilter}
+          onChange={handleFilterChange}/>
+    </div>
+  ) 
+}
 
 const CountryData = ({country}) => {
   return (
@@ -13,6 +25,7 @@ const CountryData = ({country}) => {
     )
     }
     <img src={country.flags.png} alt="country flag" />
+    <GetWeather capital={country.capital}/>
     </div>
   )
 }
@@ -29,24 +42,22 @@ const App = (props) => {
         setCountries(response.data)
       })
   }, [])
-
+  
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value)
   }
 
-  const showMessage = (bool) => {
-    setShow({show: bool})
-  }
-
   const filteredCountry = countries.filter(country => country.name.common.toLowerCase().includes(newFilter.toLowerCase()))
   console.log(filteredCountry)
+
+  const handleButtonClick = () =>{
+    setShow(!show)
+  }
+
   if (filteredCountry.length > 10){
   return (
     <div>
-      <h2>Find Country</h2>
-        filter: <input
-        value={newFilter}
-        onChange={handleFilterChange}/>
+      <InputCountry newFilter={newFilter} handleFilterChange={handleFilterChange}/>
       <h2>List of Countries:</h2>
       <p>Too many matches, please specify</p>
     </div>
@@ -55,35 +66,38 @@ const App = (props) => {
   else if (filteredCountry.length === 1){
     return (
       <div>
-        <h2>Find Country</h2>
-          filter: <input
-          value={newFilter}
-          onChange={handleFilterChange}/>
+        <InputCountry newFilter={newFilter} handleFilterChange={handleFilterChange}/>
           <h2>Country data</h2>
-          {filteredCountry.map(country => 
-          <CountryData key={country.id} country={country}/>
-          )}
+          <CountryData key={filteredCountry.uid} country={filteredCountry[0]}/>
       </div>
     )
   }
   else {
+    if (show){
+      return (
+        <div>
+          <InputCountry newFilter={newFilter} handleFilterChange={handleFilterChange}/>
+          <h2>List of Countries:</h2>
+            {filteredCountry.map(country => 
+            <li key={country.uid2}>{country.name.common} 
+            <button onClick={handleButtonClick}>show</button>
+            <CountryData country={country}/>
+            </li>
+            )}
+        </div>
+      )
+    }
     return (
       <div>
-        <h2>Find Country</h2>
-          filter: <input
-          value={newFilter}
-          onChange={handleFilterChange}/>
+        <InputCountry newFilter={newFilter} handleFilterChange={handleFilterChange}/>
         <h2>List of Countries:</h2>
-        {console.log(show)}
           {filteredCountry.map(country => 
-          <li key={country.id}>{country.name.common} 
-          <button onClick={showMessage.bind(null, true)}>show</button>
-          <button onClick={showMessage.bind(null, false)}>hide</button>
-          {show && <CountryData key={country.id} country={country}/>}</li>
+          <li key={country.uid2}>{country.name.common} 
+          <button onClick={handleButtonClick}>show</button>
+          </li>
           )}
       </div>
     )
   }
 }
-
 export default App
